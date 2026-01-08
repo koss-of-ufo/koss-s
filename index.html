@@ -264,21 +264,34 @@
         <div id="terminal"></div>
         <!-- Добавляем панель управления терминалом для мобильной версии -->
         <div class="mobile-terminal-controls">
+          <div class="terminal-input">
+            <input
+              type="text"
+              id="terminal-manual-input"
+              placeholder="Ввод команды"
+              autocomplete="off"
+              autocapitalize="off"
+              autocorrect="off"
+              spellcheck="false"
+            />
+            <button class="term-btn send-btn" data-action="send-input">Отправить</button>
+            <button class="term-btn" data-action="paste">Вставить</button>
+          </div>
           <div class="nav-controls">
             <div class="arrow-keys">
               <div class="arrow-row">
                 <button class="term-btn invisible"></button>
-                <button class="term-btn" data-key="ArrowUp">↑</button>
+                <button class="term-btn" data-key="ArrowUp" data-repeat="true">↑</button>
                 <button class="term-btn invisible"></button>
               </div>
               <div class="arrow-row">
-                <button class="term-btn" data-key="ArrowLeft">←</button>
+                <button class="term-btn" data-key="ArrowLeft" data-repeat="true">←</button>
                 <button class="term-btn invisible"></button>
-                <button class="term-btn" data-key="ArrowRight">→</button>
+                <button class="term-btn" data-key="ArrowRight" data-repeat="true">→</button>
               </div>
               <div class="arrow-row">
                 <button class="term-btn invisible"></button>
-                <button class="term-btn" data-key="ArrowDown">↓</button>
+                <button class="term-btn" data-key="ArrowDown" data-repeat="true">↓</button>
                 <button class="term-btn invisible"></button>
               </div>
             </div>
@@ -309,7 +322,12 @@
             </div>
           </div>
           <div class="extra-controls">
-            <button class="term-btn" data-key="/">/</button>
+            <button class="term-btn" data-key="Backspace" data-repeat="true">⌫</button>
+            <button class="term-btn" data-seq="&#x03;">Ctrl+C</button>
+            <button class="term-btn" data-seq="&#x1a;">Ctrl+Z</button>
+            <button class="term-btn" data-seq="&#x04;">Ctrl+D</button>
+            <button class="term-btn" data-seq="&#x0c;">Ctrl+L</button>
+            <button class="term-btn" data-text="/">/</button>
           </div>
         </div>
       </div>
@@ -331,56 +349,6 @@
           });
         }
 
-        // Обработчик для кнопок управления терминалом
-        const terminalButtons = document.querySelectorAll('.term-btn');
-        terminalButtons.forEach(button => {
-          button.addEventListener('click', function() {
-            const key = this.getAttribute('data-key');
-            if (!key || this.classList.contains('invisible')) return;
-            
-            // Создаем событие нажатия клавиши
-            const event = new KeyboardEvent('keydown', {
-              key: key,
-              code: key,
-              keyCode: getKeyCode(key),
-              which: getKeyCode(key),
-              bubbles: true,
-              cancelable: true
-            });
-            
-            // Отправляем событие в терминал
-            if (term) {
-              term.textarea.dispatchEvent(event);
-            }
-          });
-        });
-
-        // Функция для получения keyCode по имени клавиши
-        function getKeyCode(key) {
-          const keyCodes = {
-            'ArrowUp': 38,
-            'ArrowDown': 40,
-            'ArrowLeft': 37,
-            'ArrowRight': 39,
-            'Enter': 13,
-            'Escape': 27,
-            'Tab': 9,
-            '/': 191,
-            'F1': 112,
-            'F2': 113,
-            'F3': 114,
-            'F4': 115,
-            'F5': 116,
-            'F6': 117,
-            'F7': 118,
-            'F8': 119,
-            'F9': 120,
-            'F10': 121,
-            'F11': 122,
-            'F12': 123
-          };
-          return keyCodes[key] || 0;
-        }
       });
     </script>
   </body>
