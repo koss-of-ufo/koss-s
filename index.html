@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Генератор IP и SSH</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/xterm/css/xterm.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/xterm/lib/xterm.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit/lib/xterm-addon-fit.js"></script>
+    <script src="gen-ip.js"></script>
+    <script src="connectSSH.js"></script>
+    <script src="command.js"></script>
+    <script src="status-curl.js"></script>
+    <script src="status-web.js"></script>
+    <script src="vibor-polosi.js"></script>
+    <script src="interface.js"></script>
+    <script src="swap.js"></script>
+    <script src="bnr-client.js"></script>
+    <script src="bank-commands.js"></script>
+    <script src="terminal-controls.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <h1>ЭлектроДежурный</h1>
+
+      <div class="tool-item">
+        <h2>Генератор IP для SSH</h2>
+        <div class="form-group">
+          <label>Выберите локацию:</label>
+          <div class="location-buttons">
+            <!-- Кнопки локаций будут добавлены через JavaScript -->
+          </div>
+          <input type="hidden" id="location" value="khabarovsk" />
+        </div>
+
+        <div class="form-group">
+          <label>Выберите ПВП:</label>
+          <div class="pvp-buttons" style="display: flex;">
+            <button type="button" class="pvp-btn" data-pvp="1">ПВП-1</button>
+            <button type="button" class="pvp-btn" data-pvp="2">ПВП-2</button>
+            <button type="button" class="pvp-btn" data-pvp="3">ПВП-3</button>
+            <button type="button" class="pvp-btn" data-pvp="4">ПВП-4</button>
+            <button type="button" class="pvp-btn" data-pvp="5">ПВП-5</button>
+          </div>
+          <div class="m11-buttons" style="display: none;">
+            <div class="m11-sections">
+              <!-- Основные секции М11 -->
+              <div class="main-sections">
+                <button type="button" class="main-section-btn" data-section="0">Секция 0</button>
+                <button type="button" class="main-section-btn" data-section="1">Секция 1</button>
+                <button type="button" class="main-section-btn" data-section="2">Секция 2</button>
+                <button type="button" class="main-section-btn" data-section="6">Секция 6</button>
+                <button type="button" class="main-section-btn" data-section="668">Секция 668</button>
+              </div>
+              
+              <!-- Подсекции для секции 0 -->
+              <div class="subsections" id="subsection-0" style="display: none;">
+                <button type="button" class="section-btn" data-section="0" data-pvp="47">47 км</button>
+                <button type="button" class="section-btn" data-section="0" style="visibility: hidden;"></button>
+                <button type="button" class="section-btn" data-section="0" style="visibility: hidden;"></button>
+                <button type="button" class="section-btn" data-section="0" style="visibility: hidden;"></button>
+              </div>
+              
+              <!-- Подсекции для секции 1 -->
+              <div class="subsections" id="subsection-1" style="display: none;">
+                <button type="button" class="section-btn" data-section="58" data-parent="1">58 км</button>
+                <button type="button" class="section-btn" data-section="67" data-parent="1">67 км</button>
+                <button type="button" class="section-btn" data-section="89" data-parent="1">89 км</button>
+                <button type="button" class="section-btn" data-section="97" data-parent="1">97 км</button>
+              </div>
+              
+              <!-- Подсекции для секции 2 -->
+              <div class="subsections" id="subsection-2" style="display: none;">
+                <button type="button" class="section-btn" data-section="124" data-parent="2">124 км</button>
+                <button type="button" class="section-btn" data-section="147" data-parent="2">147 км</button>
+              </div>
+              
+              <!-- Подсекции для секции 6 -->
+              <div class="subsections" id="subsection-6" style="display: none;">
+                <button type="button" class="section-btn" data-section="348" data-parent="6">348 км</button>
+                <button type="button" class="section-btn" data-section="402" data-parent="6">402 км</button>
+                <button type="button" class="section-btn" data-section="444" data-parent="6">444 км</button>
+                <button type="button" class="section-btn" data-section="524" data-parent="6">524 км</button>
+              </div>
+              
+              <!-- Подсекции для секции 668 -->
+              <div class="subsections" id="subsection-668" style="display: none;">
+                <button type="button" class="section-btn" data-section="668">668 км</button>
+                <button type="button" class="section-btn" data-section="668" style="visibility: hidden;"></button>
+                <button type="button" class="section-btn" data-section="668" style="visibility: hidden;"></button>
+                <button type="button" class="section-btn" data-section="668" style="visibility: hidden;"></button>
+              </div>
+            </div>
+          </div>
+          <input type="hidden" id="pvp" />
+          <input type="hidden" id="m11-section" />
+          <input type="hidden" id="parent-section" />
+        </div>
+
+        <div class="form-group">
+          <label>Выберите полосу:</label>
+          <div class="lane-buttons">
+            <div class="e-lanes"></div>
+            <div class="x-lanes"></div>
+          </div>
+          <input type="hidden" id="band" />
+        </div>
+
+        <div class="form-group">
+          <div class="checkbox-item">
+            <label for="right">
+              <input type="checkbox" id="right" />
+              Правая сторона (для e-полос)
+            </label>
+          </div>
+        </div>
+
+        <button class="submit-btn" onclick="generateIP()">
+          Сгенерировать IP
+        </button>
+        <p id="result" class="error-message"></p>
+      </div>
+
+      <div class="tool-item">
+        <h2>Подключение по SSH</h2>
+        <div class="form-group">
+          <label for="ip">IP-адрес:</label>
+          <input type="text" id="ip" />
+        </div>
+
+        <div class="form-group">
+          <label for="username">Пользователь:</label>
+          <input type="text" id="username" value="root" />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Пароль:</label>
+          <input type="password" id="password" />
+        </div>
+
+        <button class="submit-btn" onclick="connectSSH()">Подключиться</button>
+        <button class="submit-btn" onclick="updateStatus()">Обновить статус полосы</button>
+
+        <div class="tools-list">
+          <!-- Main controls section -->
+          <div class="main-controls">
+            <button class="submit-btn" onclick="sendPM2List()">PM2 ls</button>
+            <button class="submit-btn" onclick="sendRebootCommandsMoxa()">Ребут драйвера Moxa</button>
+            <button id="restartModuleBtn">Рестарт модуля</button>
+            <button id="bankBtn" class="submit-btn">БАНК</button>
+          </div>
+
+          <!-- BNR controls section -->
+          <div class="bnr-controls">
+            <div class="bnr-group">
+              <h3>BNR-Up управление</h3>
+              <button class="submit-btn" onclick="sendBNRUpReset()">BNR-Up Reset</button>
+              <button class="submit-btn" onclick="sendBNRUpStopemerg()">BNR-Up вывод из оплаты</button>
+              <button class="submit-btn" id="startBtnUp">BNR-Up(all commands)</button>
+            </div>
+            <div class="bnr-group">
+              <h3>BNR-Down управление</h3>
+              <button class="submit-btn" onclick="sendBNRDownReset()">BNR-Down Reset</button>
+              <button class="submit-btn" onclick="sendBNRDownStopemerg()">BNR-Down вывод из оплаты</button>
+              <button class="submit-btn" id="startBtnDown">BNR-Down(all commands)</button>
+            </div>
+          </div>
+          
+          <!-- Bank commands section - скрыто по умолчанию -->
+          <div class="bank-commands" style="display: none;">
+            <h3>Команды банка</h3>
+            <div class="bank-buttons">
+              <button class="submit-btn" onclick="sendBankCommandUp()">Bank Up gcsgatew</button>
+              <button class="submit-btn" onclick="sendBankCommandDown()">Bank Down gcsgatew</button>
+              <button class="submit-btn" onclick="readBankUpResult()">Прочитать результат Bank UP</button>
+              <button class="submit-btn" onclick="readBankDownResult()">Прочитать результат Bank DOWN</button>
+            </div>
+          </div>
+
+          <!-- Module buttons section -->
+          <div class="module-buttons" style="display: none">
+            <button onclick="restartModule('cardEncoder')">cardEncoder</button>
+            <button onclick="restartModule('cardEncoderR')">cardEncoderR</button>
+            <button onclick="restartModule('BNRDown')">BNRDown</button>
+            <button onclick="restartModule('BNRUp')">BNRUp</button>
+            <button onclick="restartModule('arm')">arm</button>
+            <button onclick="restartModule('atmCore')">atmCore</button>
+            <button onclick="restartModule('atmHoper')">atmHoper</button>
+            <button onclick="restartModule('atmIO')">atmIO</button>
+            <button onclick="restartModule('atmTicketReader')">atmTicketReader</button>
+            <button onclick="restartModule('bankatm')">bankatm</button>
+            <button onclick="restartModule('core')">core</button>
+            <button onclick="restartModule('dataManager')">dataManager</button>
+            <button onclick="restartModule('driverDisplay')">driverDisplay</button>
+            <button onclick="restartModule('io')">io</button>
+            <button onclick="restartModule('kktatm')">kktatm</button>
+            <button onclick="restartModule('rfid')">rfid</button>
+            <button onclick="restartModule('screencast')">screencast</button>
+            <button onclick="restartModule('snapMaker')">snapMaker</button>
+            <button onclick="restartModule('vnc')">vnc</button>
+          </div>
+        </div>
+
+        <div class="command-buttons" style="display: none">
+          <h2>Выберите команду для выполнения:</h2>
+          <div class="tools-list">
+            <button class="submit-btn" onclick="executeCommandUp(22)">
+              22 - состояние всех модулей
+            </button>
+            <button class="submit-btn" onclick="executeCommandUp(71)">
+              71 - подробное состояние модуля
+            </button>
+            <button class="submit-btn" onclick="executeCommandUp(1)">
+              1 - reset
+            </button>
+            <button class="submit-btn" onclick="executeCommandUp(87)">
+              87 - информация по пробегам
+            </button>
+            <button class="submit-btn" onclick="executeCommandUp(19)">
+              19 - полный reboot
+            </button>
+            <button class="submit-btn" onclick="executeCommandUp(67)">
+              67 - сброс счетчиков
+            </button>
+            <button class="submit-btn" onclick="finishProcessUp()">
+              0 - выход
+            </button>
+          </div>
+        </div>
+
+        <div class="command-buttons-down" style="display: none">
+          <h2>Выберите команду для выполнения:</h2>
+          <div class="tools-list">
+            <button class="submit-btn" onclick="executeCommandDown(22)">
+              22 - состояние всех модулей
+            </button>
+            <button class="submit-btn" onclick="executeCommandDown(71)">
+              71 - подробное состояние модуля
+            </button>
+            <button class="submit-btn" onclick="executeCommandDown(1)">
+              1 - reset
+            </button>
+            <button class="submit-btn" onclick="executeCommandDown(87)">
+              87 - информация по пробегам
+            </button>
+            <button class="submit-btn" onclick="executeCommandDown(19)">
+              19 - полный reboot
+            </button>
+            <button class="submit-btn" onclick="executeCommandDown(67)">
+              67 - сброс счетчиков
+            </button>
+            <button class="submit-btn" onclick="finishProcessDown()">
+              0 - выход
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tool-item">
+        <div id="terminal"></div>
+        <!-- Добавляем панель управления терминалом для мобильной версии -->
+        <div class="mobile-terminal-controls">
+          <div class="nav-controls">
+            <div class="arrow-keys">
+              <div class="arrow-row">
+                <button class="term-btn invisible"></button>
+                <button class="term-btn" data-key="ArrowUp">↑</button>
+                <button class="term-btn invisible"></button>
+              </div>
+              <div class="arrow-row">
+                <button class="term-btn" data-key="ArrowLeft">←</button>
+                <button class="term-btn invisible"></button>
+                <button class="term-btn" data-key="ArrowRight">→</button>
+              </div>
+              <div class="arrow-row">
+                <button class="term-btn invisible"></button>
+                <button class="term-btn" data-key="ArrowDown">↓</button>
+                <button class="term-btn invisible"></button>
+              </div>
+            </div>
+            <div class="main-keys">
+              <button class="term-btn wide-btn" data-key="Enter">Enter</button>
+              <button class="term-btn wide-btn" data-key="Escape">Esc</button>
+              <button class="term-btn wide-btn" data-key="Tab">Tab</button>
+            </div>
+          </div>
+          <div class="function-keys">
+            <div class="f-keys-row">
+              <button class="term-btn f-key" data-key="F1">F1</button>
+              <button class="term-btn f-key" data-key="F2">F2</button>
+              <button class="term-btn f-key" data-key="F3">F3</button>
+              <button class="term-btn f-key" data-key="F4">F4</button>
+            </div>
+            <div class="f-keys-row">
+              <button class="term-btn f-key" data-key="F5">F5</button>
+              <button class="term-btn f-key" data-key="F6">F6</button>
+              <button class="term-btn f-key" data-key="F7">F7</button>
+              <button class="term-btn f-key" data-key="F8">F8</button>
+            </div>
+            <div class="f-keys-row">
+              <button class="term-btn f-key" data-key="F9">F9</button>
+              <button class="term-btn f-key" data-key="F10">F10</button>
+              <button class="term-btn f-key" data-key="F11">F11</button>
+              <button class="term-btn f-key" data-key="F12">F12</button>
+            </div>
+          </div>
+          <div class="extra-controls">
+            <button class="term-btn" data-key="/">/</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <script>
+      // Обработчик для кнопки БАНК
+      document.addEventListener('DOMContentLoaded', function() {
+        const bankBtn = document.getElementById('bankBtn');
+        const bankCommands = document.querySelector('.bank-commands');
+        
+        if (bankBtn && bankCommands) {
+          bankBtn.addEventListener('click', function() {
+            if (bankCommands.style.display === 'none') {
+              bankCommands.style.display = 'block';
+            } else {
+              bankCommands.style.display = 'none';
+            }
+          });
+        }
+
+        // Обработчик для кнопок управления терминалом
+        const terminalButtons = document.querySelectorAll('.term-btn');
+        terminalButtons.forEach(button => {
+          button.addEventListener('click', function() {
+            const key = this.getAttribute('data-key');
+            if (!key || this.classList.contains('invisible')) return;
+            
+            // Создаем событие нажатия клавиши
+            const event = new KeyboardEvent('keydown', {
+              key: key,
+              code: key,
+              keyCode: getKeyCode(key),
+              which: getKeyCode(key),
+              bubbles: true,
+              cancelable: true
+            });
+            
+            // Отправляем событие в терминал
+            if (term) {
+              term.textarea.dispatchEvent(event);
+            }
+          });
+        });
+
+        // Функция для получения keyCode по имени клавиши
+        function getKeyCode(key) {
+          const keyCodes = {
+            'ArrowUp': 38,
+            'ArrowDown': 40,
+            'ArrowLeft': 37,
+            'ArrowRight': 39,
+            'Enter': 13,
+            'Escape': 27,
+            'Tab': 9,
+            '/': 191,
+            'F1': 112,
+            'F2': 113,
+            'F3': 114,
+            'F4': 115,
+            'F5': 116,
+            'F6': 117,
+            'F7': 118,
+            'F8': 119,
+            'F9': 120,
+            'F10': 121,
+            'F11': 122,
+            'F12': 123
+          };
+          return keyCodes[key] || 0;
+        }
+      });
+    </script>
+  </body>
+</html>
