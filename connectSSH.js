@@ -157,7 +157,13 @@ function createNewConnection(host, username, password) {
         term.loadAddon(fitAddon);
         
         // Открываем терминал
-        term.open(document.getElementById("terminal"));
+        const terminalContainer = document.getElementById("terminal");
+        term.open(terminalContainer);
+        term.focus();
+        if (terminalContainer && !terminalContainer.dataset.focusBound) {
+            terminalContainer.addEventListener('pointerdown', () => term.focus());
+            terminalContainer.dataset.focusBound = 'true';
+        }
         
         // Применяем FitAddon для правильного отображения
         const updateTerminalSize = () => {
@@ -223,17 +229,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 foreground: '#ffffff'
             }
         });
-        
+
         // Устанавливаем экземпляр терминала для управления
         setTerminalInstance(term);
-        
+
         // Добавляем FitAddon для автоматического изменения размера терминала
         fitAddon = new FitAddon.FitAddon();
         term.loadAddon(fitAddon);
-        
+
         // Открываем терминал
-        term.open(document.getElementById("terminal"));
-        
+        const terminalContainer = document.getElementById("terminal");
+        term.open(terminalContainer);
+        term.focus();
+        if (terminalContainer && !terminalContainer.dataset.focusBound) {
+            terminalContainer.addEventListener('pointerdown', () => term.focus());
+            terminalContainer.dataset.focusBound = 'true';
+        }
+
         // Применяем FitAddon для правильного отображения
         const updateTerminalSize = () => {
             if (fitAddon) {
@@ -255,10 +267,10 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         setTimeout(updateTerminalSize, 100);
-        
+
         // Обработчик изменения размера окна для подстройки терминала
         window.addEventListener('resize', updateTerminalSize);
-        
+
         // Настраиваем обработку ввода через term.onData
         term.onData((data) => {
             console.log('Отправляем данные в терминал:', data);
@@ -266,91 +278,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.socket.send(data);
             }
         });
-        
+
         term.writeln("Терминал инициализирован. Подключитесь к устройству для начала работы.");
         term.scrollToBottom();
     }
 });
-
-// Добавляем обработчик для кнопок управления терминалом
-document.addEventListener('DOMContentLoaded', function() {
-    const terminalButtons = document.querySelectorAll('.term-btn');
-    
-    terminalButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const key = this.getAttribute('data-key');
-            if (!key || this.classList.contains('invisible')) return;
-            
-            if (term) {
-                // Эмулируем реальное нажатие клавиши через обработчик данных терминала
-                switch(key) {
-                    case 'ArrowUp':
-                        term._core._onKey({key: key, domEvent: {preventDefault: () => {}}});
-                        break;
-                    case 'ArrowDown':
-                        term._core._onKey({key: key, domEvent: {preventDefault: () => {}}});
-                        break;
-                    case 'ArrowRight':
-                        term._core._onKey({key: key, domEvent: {preventDefault: () => {}}});
-                        break;
-                    case 'ArrowLeft':
-                        term._core._onKey({key: key, domEvent: {preventDefault: () => {}}});
-                        break;
-                    case 'Enter':
-                        term._core._onKey({key: 'Enter', domEvent: {preventDefault: () => {}}});
-                        break;
-                    case 'Escape':
-                        term._core._onKey({key: 'Escape', domEvent: {preventDefault: () => {}}});
-                        break;
-                    case 'Tab':
-                        term._core._onKey({key: 'Tab', domEvent: {preventDefault: () => {}}});
-                        break;
-                    case '/':
-                        term._core._onKey({key: '/', domEvent: {preventDefault: () => {}}});
-                        break;
-                    default:
-                        // Для функциональных клавиш F1-F12
-                        if (key.startsWith('F')) {
-                            term._core._onKey({key: key, domEvent: {preventDefault: () => {}}});
-                        }
-                }
-            }
-        });
-        
-        // Предотвращаем двойное нажатие на мобильных устройствах
-        button.addEventListener('touchstart', function(e) {
-            e.preventDefault();
-            this.click();
-        });
-    });
-});
-
-// Функция для получения кода клавиши терминала
-function getTerminalKeyCode(key) {
-    const keyMap = {
-        'ArrowUp': 'A',
-        'ArrowDown': 'B',
-        'ArrowRight': 'C',
-        'ArrowLeft': 'D',
-        'Enter': 'M',
-        'Escape': '[escape]',
-        'Tab': '[tab]',
-        'Backspace': '[backspace]',
-        'F1': 'OP',
-        'F2': 'OQ',
-        'F3': 'OR',
-        'F4': 'OS',
-        'F5': '15~',
-        'F6': '17~',
-        'F7': '18~',
-        'F8': '19~',
-        'F9': '20~',
-        'F10': '21~',
-        'F11': '23~',
-        'F12': '24~',
-        ' ': ' ',
-        '/': '/'
-    };
-    
-    return keyMap[key] || key;
-}

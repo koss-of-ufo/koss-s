@@ -1010,6 +1010,31 @@ input[readonly]:focus {
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
+.terminal-input {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+    background: rgba(255,255,255,0.05);
+    padding: 10px;
+    border-radius: 10px;
+}
+
+#terminal-manual-input {
+    flex: 1 1 180px;
+    min-height: 42px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: #1f242c;
+    color: #fff;
+    padding: 8px 12px;
+    font-size: 14px;
+}
+
+#terminal-manual-input::placeholder {
+    color: rgba(255,255,255,0.6);
+}
+
 .nav-controls {
     display: flex;
     gap: 25px;
@@ -1113,18 +1138,26 @@ input[readonly]:focus {
     background: #27ae60;
 }
 
+.send-btn {
+    background: #2ecc71;
+}
+
+.send-btn:active {
+    background: #27ae60;
+}
+
 /* Показываем панель управления только на мобильных устройствах */
 @media (max-width: 768px) {
     .mobile-terminal-controls {
         display: flex;
     }
-    
+
     .term-btn {
         min-width: 45px;
         height: 45px;
         font-size: 15px;
     }
-    
+
     .wide-btn {
         min-width: 90px;
     }
@@ -1135,32 +1168,36 @@ input[readonly]:focus {
         padding: 12px;
         gap: 12px;
     }
-    
+
     .nav-controls {
         gap: 12px;
     }
-    
+
     .main-keys {
         padding: 8px;
     }
-    
+
     .function-keys {
         padding: 12px;
     }
-    
+
     .extra-controls {
         padding: 0 12px;
     }
-    
+
     .term-btn {
         min-width: 40px;
         height: 40px;
         font-size: 14px;
         padding: 6px;
     }
-    
+
     .wide-btn {
         min-width: 80px;
+    }
+
+    #terminal-manual-input {
+        flex-basis: 100%;
     }
 }
 
@@ -1176,4 +1213,4 @@ input[readonly]:focus {
 
 .term-btn.f-key:focus {
     box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.5);
-} 
+}
