@@ -965,12 +965,12 @@ input[readonly]:focus {
 .xterm-rows {
     position: relative !important;
     z-index: 0 !important;
-    margin-top: 15px;
+    margin-top: 0;
 }
 
 /* Стили для отдельных строк терминала */
 .xterm-rows > div {
-    position: relative !important;
+    position: static !important;
     z-index: 0 !important;
     white-space: nowrap;
 }
