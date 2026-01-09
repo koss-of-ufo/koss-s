@@ -948,43 +948,6 @@ input[readonly]:focus {
     background-color: #000;
 }
 
-/* Стили для xterm-viewport */
-.xterm-viewport {
-    width: 100% !important;
-    height: 100% !important;
-    overflow-y: auto !important;
-    background-color: #000 !important;
-}
-
-/* Стили для xterm-screen */
-.xterm-screen {
-    position: relative !important;
-}
-
-/* Стили для xterm-rows */
-.xterm-rows {
-    position: relative !important;
-    z-index: 0 !important;
-    margin-top: 15px;
-}
-
-/* Стили для отдельных строк терминала */
-.xterm-rows > div {
-    position: relative !important;
-    z-index: 0 !important;
-    white-space: nowrap;
-}
-
-/* Стили для курсора */
-.xterm-cursor-layer {
-    z-index: 1;
-}
-
-/* Стили для слоя декораций */
-.xterm-decoration-container {
-    z-index: 2;
-}
-
 /* Адаптивность для мобильных устройств */
 @media (max-width: 768px) {
     #terminal {
